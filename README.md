@@ -1,14 +1,10 @@
 # ESG Disclosure Dashboard
 
-[**Open the live ESG Disclosure Explorer →**](https://fancasta.github.io/climate-disclosure-explorer/)　·　[Company directory](https://fancasta.github.io/climate-disclosure-explorer/?view=explore)　·　[Research pipeline](https://github.com/fancasta/climate-disclosure-explorer)
+**Overview** · [Architecture](ARCHITECTURE.md) · [Live explorer](https://fancasta.github.io/climate-disclosure-explorer/) · [Research pipeline](https://github.com/fancasta/climate-disclosure-explorer)
 
-How do companies describe water use, labour rights or board oversight, and where is the supporting passage? Search 3,035 extractable pages from 27 reports. Run a keyword search, choose one of 30 ESG topics or narrow the results to a publisher or sector. Every hit carries a PDF page reference.
+A banker preparing for a financing discussion needs to check which emissions a company’s pledge covers and what progress it can show. This NUS capstone for **NatWest Markets** (August–December 2022) linked nine climate indicators to evidence in company reports. The public explorer extends that work to 27 reports and 3,035 searchable PDF pages across environmental, social and governance topics.
 
-This dashboard grew out of the **NUS Business Analytics capstone for NatWest Markets**, August–December 2022. The team used machine learning to explore decarbonisation strategies. The original React, Node.js and MySQL application compares company indicators by sector and reporting year. The later public dashboard extends that work across environmental, social and governance topics.
-
-Bankers preparing a financing discussion need to see which emissions a company’s pledge covers and what progress it can show. Different definitions and long reports make peer comparisons slow. The capstone links each indicator to a passage so an analyst can check its scope and bring specific questions to a client meeting.
-
-**Worked example.** Shell’s 2021 report set a 2030 target to halve net Scope 1 and 2 emissions under its operational control against 2016 levels. Its results section lists asset sales among the reasons direct emissions fell. An analyst could ask how much of the decline came from changes at sites Shell kept operating. [Read the target on PDF page 92](https://fancasta.github.io/climate-disclosure-explorer/?publisher=Shell&page=92) · [Check the reported progress on PDF page 95](https://fancasta.github.io/climate-disclosure-explorer/?publisher=Shell&page=95)
+**Try it with Shell.** Its 2021 report set a 2030 emissions target and later listed asset sales among the reasons emissions fell. Open the two pages and ask how much of the decline came from improvements at sites Shell kept operating. [Read the target](https://fancasta.github.io/climate-disclosure-explorer/?publisher=Shell&page=92) · [Check the reported progress](https://fancasta.github.io/climate-disclosure-explorer/?publisher=Shell&page=95)
 
 [![Homepage with a worked financing discussion using Shell’s 2021 report](docs/esg-home.png)](https://fancasta.github.io/climate-disclosure-explorer/)
 
@@ -30,26 +26,9 @@ Try [methane leakage](https://fancasta.github.io/climate-disclosure-explorer/?q=
 
 ## Local reporting workspace
 
-The original database-backed workspace is available at `/workspace` in the full-stack app.
-
-The 2022 dashboard paired nine climate-disclosure indicators with supporting sentences. For the long-term net-zero classifier, the training data contains 1,003 labelled sentences, including 196 positive examples. [Original labelled dataset](https://github.com/CWei88/Group17-Capstone/blob/4ea9478a551bafa79449aa4105246ee9c9aebf75/pipeline/Notebooks/training_datasets/Attribute%2012/A12.csv) · [Dashboard schema](https://github.com/fancasta/esg-disclosure-dashboard/blob/538607eb71014d29e5b3d88bc7a8a49bde72fdd9/mysql/backup.sql)
-
-## From report rows to disclosure counts
-
-The dashboard groups records in one pass by reporting year and industry. Each row contributes one to the group total. An affirmative indicator contributes one to that disclosure's count. Missing indicators contribute zero to the count and the report stays in the denominator. The filter lists come from groups present in the data.
+The original React workspace groups reports by industry and year and lets a reader inspect the sentences behind nine indicators. In the fictional 2024 manufacturing sample below, five of six reports disclose a net-zero goal and three describe a transition plan. The bars count disclosures in the selected group. [Sample data](examples/mock-reports.json) · [Aggregation logic](frontend/src/components/disclosures.js) · [Architecture and data flow](ARCHITECTURE.md#how-the-capstone-compares-companies)
 
 ![Screenshot of the running React summary with six fictional manufacturing reports, five net-zero goals and three transition plans](docs/disclosure-summary.png)
-
-This screenshot uses the [synthetic report fixture](examples/mock-reports.json). Six of its eight rows are manufacturing reports from 2024. Five of those six disclose a net-zero goal and three disclose a transition plan. The other two rows belong to different groups. [Aggregation code](frontend/src/components/disclosures.js) · [Filter and aggregation tests](frontend/src/components/DataSummary.test.js)
-
-## Explore the dashboard
-
-- **Look up a company.** Selecting a company loads its reports through the backend API. The company view lets readers move from a summary to individual report records. [Dashboard page](frontend/src/pages/HomeDashboard.js) · [Report table](frontend/src/components/ReportTable.js)
-- **Compare reporting practices.** The summary groups report records by year and industry. Its chart counts indicators such as verified emissions amounts, net-zero goals, transition plans and supplier engagement. The bars count disclosures in the dataset. They do not measure tonnes of emissions or progress towards a target. [Aggregation logic](frontend/src/components/DataSummary.js) · [Chart](frontend/src/components/SummaryChart.js)
-
-## How the application fits together
-
-The React frontend requests company and report records from a Node.js backend. The backend reads from MySQL, and the repository includes a SQL backup for the project database. [API routes](backend/routes) · [Database files](mysql) · [Docker Compose setup](docker-compose.yml)
 
 ## Run locally
 
